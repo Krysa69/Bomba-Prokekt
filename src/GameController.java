@@ -28,7 +28,7 @@ public class GameController {
         possibleThrows.add(Dice.LAST);
     }
 
-//Method for start of the game
+    //Method for start of the game
     public void game() {
         //Choosing a number of players by adding
         emptyUsedWordsFile();
@@ -56,7 +56,7 @@ public class GameController {
                 Dice dice = diceThrow();
                 String str = selectRandomSyllable();
                 System.out.println("Position:" + dice);
-                System.out.println("Syllable:"+str);
+                System.out.println("Syllable:" + str);
                 System.out.println(isWordInFile(sc.next(), dice, str));
 
 
@@ -97,7 +97,8 @@ public class GameController {
              BufferedReader bru = new BufferedReader(new FileReader("Words.txt"));
              BufferedWriter bw = new BufferedWriter(new FileWriter("UsedWords.txt", true))) {
 
-
+            MyThread mt = new MyThread();
+            mt.start();
             String line1;
             String line2;
             boolean foundInUsedWords = false;
@@ -116,6 +117,9 @@ public class GameController {
                     foundInWords = true;
                     break;
                 }
+            }
+            if (!MyThread.isValiation()) {
+                return false;
             }
 
             if (!foundInUsedWords && foundInWords) {
