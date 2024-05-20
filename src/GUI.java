@@ -55,7 +55,8 @@ public class GUI {
         profilePanel.add(castleNameLabel, BorderLayout.NORTH);
 
         profileImageLabel = new JLabel("Profile Image");
-        profileImageLabel.setHorizontalAlignment(JLabel.CENTER);
+        //profileImageLabel.setHorizontalAlignment(JLabel.CENTER);
+        profileImageLabel.setVerticalAlignment(JLabel.EAST);
         profilePanel.add(profileImageLabel, BorderLayout.CENTER);
 
         frame.getContentPane().add(profilePanel, BorderLayout.EAST);
