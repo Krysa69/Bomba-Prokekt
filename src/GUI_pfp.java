@@ -13,10 +13,10 @@ public class GUI_pfp {
         frame.setSize(600, 600);
 
         String[] imageNames = {
-                "nevim.jpg","scaredTyger.jpg","nevim.jpg","nevim.jpg",
-                "kocka.jpg","kocka.jpg","kocka.jpg","kocka.jpg",
-                "cata.jpg","cata.jpg","cata.jpg","cata.jpg",
-                "travisFish.png","travisFish.png","travisFish.png","travisFish.png",
+                "sl.jpg","scaredTyger.jpg","gojo.jpg","lebron.jpg",
+                "novby.jpg","sam.jpg","kocka.jpg","mellstroy.jpg",
+                "cata.jpg","johan.jpg","majkl.jpg","asta.jpg",
+                "sukuna.png","travisFish.png","majsner.jpg","bejr.jpg",
 
         };
 

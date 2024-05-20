@@ -1,5 +1,6 @@
 public class Player {
 String name;
+String image;
 boolean alive;
 
     public Player(String name) {

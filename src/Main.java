@@ -3,7 +3,10 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-GUI_pfp.SelectionOfProfilePicture();
+
+
+
+        GUI_pfp.SelectionOfProfilePicture();
         int numPlayers = 4; // Zde můžete nastavit počet hráčů
         new GUI(numPlayers);
 
