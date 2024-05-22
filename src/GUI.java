@@ -1,87 +1,71 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.*;
+import java.util.ArrayList;
+import java.util.List;
 
-public class GUI {
-    private JFrame frame;
-    private int numPlayers;
-    private JPanel arrowPanel;
-    private JPanel profilePanel;
-    private JLabel castleNameLabel;
-    private JLabel profileImageLabel;
-    private JTextField textField;
-    private double currentRotationAngle = 0.0;
+public class GUI extends JFrame {
+    public GUI(int numOfPlayers) {
+        setTitle("Grid Window");
+        setSize(1001, 1001);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-    public GUI(int numPlayers) {
-        this.numPlayers = numPlayers;
-        initialize();
+        JPanel mainPanel = new JPanel(new GridLayout(9, 9));
+        int cellWidth = 1000 / 9;
+        int cellHeight = 1000 / 9;
+
+        List<JPanel> cells = new ArrayList<>();
+
+        for (int i = 0; i < 81; i++) {
+            JPanel cell = new JPanel(new BorderLayout());
+            cells.add(cell);
+            mainPanel.add(cell);
+        }
+        switch (numOfPlayers) {
+            case 1:
+                addPlayerToCell(cells, 0, 4, GUI_pfp.selectProfilePicture(this), cellWidth, cellHeight);
+                break;
+            case 2:
+                addPlayerToCell(cells, 0, 4, GUI_pfp.selectProfilePicture(this), cellWidth, cellHeight);
+                addPlayerToCell(cells, 8, 4, GUI_pfp.selectProfilePicture(this), cellWidth, cellHeight);
+                break;
+            case 3:
+                addPlayerToCell(cells, 0, 4, GUI_pfp.selectProfilePicture(this), cellWidth, cellHeight);
+                addPlayerToCell(cells, 8, 8, GUI_pfp.selectProfilePicture(this), cellWidth, cellHeight);
+                addPlayerToCell(cells, 8, 0, GUI_pfp.selectProfilePicture(this), cellWidth, cellHeight);
+                break;
+            case 4:
+                addPlayerToCell(cells, 0, 4, GUI_pfp.selectProfilePicture(this), cellWidth, cellHeight);
+                addPlayerToCell(cells, 4, 8, GUI_pfp.selectProfilePicture(this), cellWidth, cellHeight);
+                addPlayerToCell(cells, 8, 4, GUI_pfp.selectProfilePicture(this), cellWidth, cellHeight);
+                addPlayerToCell(cells, 4, 0, GUI_pfp.selectProfilePicture(this), cellWidth, cellHeight);
+                break;
+            default:
+                System.out.println("Error");
+                break;
+        }
+
+        add(mainPanel);
+
+        setVisible(true);
     }
 
-    private void initialize() {
-        frame = new JFrame();
-        frame.setSize(600, 400);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.getContentPane().setLayout(new BorderLayout());
+    private void addPlayerToCell(List<JPanel> cells, int cellRow, int cellColumn, String[] array, int cellWidth, int cellHeight) {
+        int cellIndex = cellRow * 9 + cellColumn;
+        JPanel cell = cells.get(cellIndex);
 
-        arrowPanel = new JPanel() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                Graphics2D g2d = (Graphics2D) g;
+        ImageIcon originalIcon = new ImageIcon(getClass().getResource("/resources/" + array[0]));
+        Image originalImage = originalIcon.getImage();
+        Image scaledImage = originalImage.getScaledInstance(cellWidth, cellHeight, Image.SCALE_SMOOTH);
+        ImageIcon icon = new ImageIcon(scaledImage);
+        JLabel imageLabel = new JLabel(icon);
+        cell.add(imageLabel, BorderLayout.CENTER);
 
-                int centerX = getWidth() / 2;
-                int centerY = getHeight() / 2;
-
-                Path2D.Double arrowShape = new Path2D.Double();
-                arrowShape.moveTo(centerX, centerY - 50); // Top
-                arrowShape.lineTo(centerX - 20, centerY + 20); // Bottom left
-                arrowShape.lineTo(centerX + 20, centerY + 20); // Bottom right
-                arrowShape.closePath();
-
-                g2d.rotate(Math.toRadians(currentRotationAngle), centerX, centerY);
-                g2d.setColor(Color.RED);
-                g2d.fill(arrowShape);
-            }
-        };
-        frame.getContentPane().add(arrowPanel, BorderLayout.CENTER);
-
-        textField = new JTextField(10);
-        textField.setHorizontalAlignment(JTextField.CENTER);
-        frame.getContentPane().add(textField, BorderLayout.SOUTH);
-
-        profilePanel = new JPanel(new BorderLayout());
-        castleNameLabel = new JLabel("Castle Name");
-        castleNameLabel.setHorizontalAlignment(JLabel.CENTER);
-        profilePanel.add(castleNameLabel, BorderLayout.NORTH);
-
-        profileImageLabel = new JLabel("Profile Image");
-        //profileImageLabel.setHorizontalAlignment(JLabel.CENTER);
-        profileImageLabel.setVerticalAlignment(JLabel.EAST);
-        profilePanel.add(profileImageLabel, BorderLayout.CENTER);
-
-        frame.getContentPane().add(profilePanel, BorderLayout.EAST);
-
-        frame.setVisible(true);
-    }
-
-    private void rotateArrow(double angle) {
-        currentRotationAngle += angle;
-        arrowPanel.repaint();
+        JLabel nameLabel = new JLabel(array[1]);
+        nameLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        cell.add(nameLabel, BorderLayout.SOUTH);
     }
 
     public static void main(String[] args) {
-        int numPlayers = 4;
-        GUI window = new GUI(numPlayers);
-
-        while (true) {
-            double rotationAngle = 360.0 / numPlayers;
-            window.rotateArrow(rotationAngle);
-
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+        SwingUtilities.invokeLater(() -> new GUI(3));
     }
 }

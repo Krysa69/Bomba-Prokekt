@@ -3,9 +3,9 @@ String name;
 String image;
 boolean alive;
 
-    public Player(String name) {
+    public Player(String name, String image) {
         this.name = name;
-        alive = true;
+        this.image = image;
     }
 
     public String getName() {
@@ -22,5 +22,13 @@ boolean alive;
 
     public void setAlive(boolean alive) {
         this.alive = alive;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }

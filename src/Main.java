@@ -6,12 +6,9 @@ public class Main {
 
 
 
-        GUI_pfp.SelectionOfProfilePicture();
-        int numPlayers = 4; // Zde můžete nastavit počet hráčů
-        new GUI(numPlayers);
 
-        /*GameController gc = new GameController();
-        Scanner sc = new Scanner(System.in);
-        gc.game();*/
+
+
+
     }
 }

@@ -28,44 +28,6 @@ public class GameController {
         possibleThrows.add(Dice.LAST);
     }
 
-    //Method for start of the game
-    public void game() {
-        //Choosing a number of players by adding
-        emptyUsedWordsFile();
-        System.out.println("Choose your name:");
-        activePlayers.add(new Player(sc.next()));
-        boolean idk = true;
-        while (idk) {
-            System.out.println("1-Add more players\n2-Start the game");
-            switch (sc.next()) {
-                case "1":
-                    System.out.println("Choose your name:");
-                    activePlayers.add(new Player(sc.next()));
-                    break;
-                case "2":
-                    idk = false;
-                    break;
-            }
-        }
-        //cycle for the whole game that last until it is only the last player
-        while (activePlayers.size() > 1) {
-            roundCount++;
-            System.out.println("Round number " + roundCount);
-            for (int i = 0; i < activePlayers.size(); i++) {
-                System.out.println(activePlayers.get(i).getName() + "’s turn");
-                Dice dice = diceThrow();
-                String str = selectRandomSyllable();
-                System.out.println("Position:" + dice);
-                System.out.println("Syllable:" + str);
-                System.out.println(isWordInFile(sc.next(), dice, str));
-
-
-            }
-
-
-        }
-    }
-
 
     public static void emptyUsedWordsFile() {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter("UsedWords.txt"))) {
