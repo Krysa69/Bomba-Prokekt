@@ -1,34 +1,17 @@
 public class Player {
-String name;
-String image;
-boolean alive;
+    private String profilePicturePath;
+    private String name;
 
-    public Player(String name, String image) {
+    public Player(String profilePicturePath, String name) {
+        this.profilePicturePath = profilePicturePath;
         this.name = name;
-        this.image = image;
+    }
+
+    public String getProfilePicturePath() {
+        return profilePicturePath;
     }
 
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public boolean isAlive() {
-        return alive;
-    }
-
-    public void setAlive(boolean alive) {
-        this.alive = alive;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
     }
 }
