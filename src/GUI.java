@@ -4,22 +4,21 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 
 public class GUI extends JFrame {
-    private ArrowPanel arrowPanel;
-    private List<Player> players;
-    private List<JPanel> cells;
-    private JTextField answerField;
-    private JTextArea writingArea;
-    private JButton confirmButton;
-    private JLabel diceResultLabel;
-    private JLabel syllableLabel;
-    private GameController gameController;
-    private Dice currentDice;
-    private String currentSyllable;
-    private static final int ARROW_PANEL_INDEX = (9 * 4) + 4;
-    private static final int BUTTON_PANEL_INDEX = (9 * 5) + 4;
+    ArrowPanel arrowPanel;
+    List<Player> players;
+    List<JPanel> cells;
+    JTextField answerField;
+    JTextArea writingArea;
+    JButton confirmButton;
+    JLabel diceResultLabel;
+    JLabel syllableLabel;
+    GameController gameController;
+    Dice currentDice;
+    String currentSyllable;
+    static final int ARROW_PANEL_INDEX = (9 * 4) + 4;
+    static final int BUTTON_PANEL_INDEX = (9 * 5) + 4;
 
     public GUI(int numOfPlayers) {
         setTitle("Word Bomb");
@@ -29,7 +28,7 @@ public class GUI extends JFrame {
         cells = new ArrayList<>();
         gameController = new GameController();
 
-
+        // Initialize dice and syllable
         currentDice = gameController.diceThrow();
         currentSyllable = gameController.selectRandomSyllable();
 
@@ -43,7 +42,7 @@ public class GUI extends JFrame {
             mainPanel.add(cell);
         }
 
-
+        // Add players to their initial positions
         for (int i = 0; i < numOfPlayers; i++) {
             players.add(createPlayer(this));
         }
@@ -102,7 +101,7 @@ public class GUI extends JFrame {
         add(container);
 
         setVisible(true);
-        updatePlayerPositions();
+        updatePlayerPositions(); // Update player positions after adding arrowPanel and other components
     }
 
     private Player createPlayer(JFrame parentFrame) {
@@ -132,7 +131,7 @@ public class GUI extends JFrame {
         if (player == null) return;
         int cellIndex = cellRow * 9 + cellColumn;
         JPanel cell = cells.get(cellIndex);
-        cell.removeAll();
+        cell.removeAll();  // Clear previous content
         ImageIcon icon = createImageIcon("/resources/" + player.getProfilePicturePath(), cellWidth, cellHeight);
         JLabel imageLabel = new JLabel(icon);
         imageLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -151,7 +150,7 @@ public class GUI extends JFrame {
         return new ImageIcon(scaledImage);
     }
 
-    private void handleConfirmButtonClick() {
+    public void handleConfirmButtonClick() {
         synchronized (this) {
             this.notify();
         }
@@ -183,7 +182,7 @@ public class GUI extends JFrame {
     private void updatePlayerPositions() {
         int cellWidth = 1000 / 9;
         int cellHeight = 1000 / 9;
-        clearPlayerCells();
+        clearPlayerCells(); // Clear all player cells first
         for (int i = 0; i < players.size(); i++) {
             Player player = players.get(i);
             int[] cellCoordinates = getPlayerCellCoordinates(i, players.size());
@@ -203,11 +202,13 @@ public class GUI extends JFrame {
     }
 
     private void restoreNonPlayerComponents() {
+        // Restore arrow panel
         cells.get(ARROW_PANEL_INDEX).removeAll();
         cells.get(ARROW_PANEL_INDEX).add(arrowPanel, BorderLayout.CENTER);
         cells.get(ARROW_PANEL_INDEX).revalidate();
         cells.get(ARROW_PANEL_INDEX).repaint();
 
+        // Restore info panel with dice, syllable, and confirm button
         JPanel infoPanel = new JPanel(new GridLayout(3, 1));
         infoPanel.add(diceResultLabel);
         infoPanel.add(syllableLabel);
@@ -244,7 +245,7 @@ public class GUI extends JFrame {
                 else if (playerIndex == 2) return new int[]{8, 4};
                 else return new int[]{4, 0};
             default:
-                return new int[]{0, 0};
+                return new int[]{0, 0}; // Fallback coordinates
         }
     }
 
@@ -255,85 +256,6 @@ public class GUI extends JFrame {
             return Integer.parseInt(options[result]);
         } else {
             return -1;
-        }
-    }
-
-    public static void main(String[] args) {
-        int numOfPlayers = playerNumberChoosing();
-        if (numOfPlayers > 0) {
-            GUI gui = new GUI(numOfPlayers);
-            gui.gameController.emptyUsedWordsFile();
-            while (gui.players.size() > 1) {
-                for (int i = 0; i < gui.players.size(); i++) {
-                    Player currentPlayer = gui.players.get(i);
-                    gui.arrowPanel.rotateArrow(getRotationAngleForPlayer(i, gui.players.size()));
-                    gui.diceResultLabel.setText("Dice: " + gui.currentDice);
-                    gui.syllableLabel.setText("Syllable: " + gui.currentSyllable);
-
-                    gui.writingArea.setText("");
-                    gui.writingArea.requestFocus();
-
-                    CountDownLatch latch = new CountDownLatch(1);
-                    Timer timer = new Timer(10000, e -> {
-                        latch.countDown();
-                        gui.handleConfirmButtonClick();
-                    });
-                    timer.setRepeats(false);
-                    timer.start();
-
-                    synchronized (gui) {
-                        try {
-                            gui.wait(10000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    timer.stop();
-                    String userInput = gui.writingArea.getText().trim();
-
-                    if (userInput.isEmpty()) {
-                        JOptionPane.showMessageDialog(gui, "No answer! Player " + currentPlayer.getName() + " is out.");
-                        gui.removePlayer(i);
-                        i--;
-                    } else {
-                        boolean isValidWord = gui.gameController.isWordInFile(userInput, gui.currentDice, gui.currentSyllable);
-                        if (!isValidWord) {
-                            JOptionPane.showMessageDialog(gui, "Incorrect word! Player " + currentPlayer.getName() + " is out.");
-                            gui.removePlayer(i);
-                            i--;
-                        } else {
-                            gui.currentDice = gui.gameController.diceThrow();
-                            gui.currentSyllable = gui.gameController.selectRandomSyllable();
-                            gui.diceResultLabel.setText("Dice: " + gui.currentDice);
-                            gui.syllableLabel.setText("Syllable: " + gui.currentSyllable);
-                        }
-                    }
-
-                    if (gui.players.size() == 1) {
-                        break;
-                    }
-                }
-            }
-
-            JOptionPane.showMessageDialog(gui, "Game over! The winner is " + gui.players.get(0).getName());
-        } else {
-            System.out.println("No player selected. Exiting...");
-        }
-    }
-
-    private static double getRotationAngleForPlayer(int playerIndex, int numOfPlayers) {
-        switch (numOfPlayers) {
-            case 1:
-                return 0;
-            case 2:
-                return playerIndex == 0 ? 0 : Math.PI;
-            case 3:
-                return playerIndex * (2 * Math.PI / 3);
-            case 4:
-                return playerIndex * (Math.PI / 2);
-            default:
-                return 0;
         }
     }
 }

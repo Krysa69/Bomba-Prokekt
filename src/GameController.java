@@ -8,6 +8,7 @@ import java.util.Scanner;
 public class GameController {
     List<Player> activePlayers;
     List<Dice> possibleThrows;
+    int roundCount = 0;
     Scanner sc = new Scanner(System.in);
     Random rd = new Random();
 
