@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -7,7 +8,6 @@ import java.util.Scanner;
 public class GameController {
     List<Player> activePlayers;
     List<Dice> possibleThrows;
-    int roundCount = 0;
     Scanner sc = new Scanner(System.in);
     Random rd = new Random();
 
@@ -28,7 +28,6 @@ public class GameController {
         possibleThrows.add(Dice.LAST);
     }
 
-
     public static void emptyUsedWordsFile() {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter("UsedWords.txt"))) {
             bw.write("");
@@ -37,11 +36,14 @@ public class GameController {
         }
     }
 
-
     public String selectRandomSyllable() {
+        File syllableFile = new File("Syllables.txt");
+        if (!syllableFile.exists()) {
+            JOptionPane.showMessageDialog(null, "Syllables.txt file not found. Please ensure the file is in the correct location.");
+            return null;
+        }
         List<String> syllables = new ArrayList<>();
-
-        try (BufferedReader br = new BufferedReader(new FileReader("Sylables.txt"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(syllableFile))) {
             String syllable;
             while ((syllable = br.readLine()) != null) {
                 syllables.add(syllable);
@@ -49,18 +51,15 @@ public class GameController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         Random random = new Random();
-        return syllables.get(random.nextInt(syllables.size()));
+        return syllables.isEmpty() ? null : syllables.get(random.nextInt(syllables.size()));
     }
 
-    public boolean isWordInFile(String searchedWord, Dice dice, String sylable) {
+    public boolean isWordInFile(String searchedWord, Dice dice, String syllable) {
         try (BufferedReader br = new BufferedReader(new FileReader("UsedWords.txt"));
              BufferedReader bru = new BufferedReader(new FileReader("Words.txt"));
              BufferedWriter bw = new BufferedWriter(new FileWriter("UsedWords.txt", true))) {
 
-            MyThread mt = new MyThread();
-            mt.start();
             String line1;
             String line2;
             boolean foundInUsedWords = false;
@@ -80,21 +79,18 @@ public class GameController {
                     break;
                 }
             }
-            if (!MyThread.isValiation()) {
-                return false;
-            }
 
             if (!foundInUsedWords && foundInWords) {
                 boolean isPositionValid = false;
                 switch (dice) {
                     case FIRST:
-                        isPositionValid = foundInWords && line2.startsWith(sylable);
+                        isPositionValid = foundInWords && line2.startsWith(syllable);
                         break;
                     case MIDDLE:
-                        isPositionValid = foundInWords && line2.contains(sylable);
+                        isPositionValid = foundInWords && line2.contains(syllable);
                         break;
                     case LAST:
-                        isPositionValid = foundInWords && line2.endsWith(sylable);
+                        isPositionValid = foundInWords && line2.endsWith(syllable);
                         break;
                 }
 
@@ -104,13 +100,9 @@ public class GameController {
                     return true;
                 }
             }
-
             return false;
-
         } catch (IOException e) {
             throw new RuntimeException("Error reading or writing file: " + e.getMessage());
         }
     }
-
-
 }

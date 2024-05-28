@@ -23,13 +23,16 @@ class ArrowPanel extends JPanel {
         int centerX = getWidth() / 2;
         int centerY = getHeight() / 2;
 
-        int arrowSize = Math.min(getWidth(), getHeight()) / 3;
+        int arrowLength = Math.min(getWidth(), getHeight()) / 2;
+        int arrowWidth = arrowLength / 4;
 
         g2d.translate(centerX, centerY);
         g2d.rotate(angle);
 
         g2d.setColor(Color.RED);
-        g2d.fillPolygon(new int[]{0, -arrowSize, arrowSize}, new int[]{-arrowSize, arrowSize, arrowSize}, 3);
+        int[] xPoints = {0, -arrowWidth, arrowWidth};
+        int[] yPoints = {-arrowLength, arrowLength / 2, arrowLength / 2};
+        g2d.fillPolygon(xPoints, yPoints, 3);
 
         g2d.rotate(-angle);
         g2d.translate(-centerX, -centerY);
