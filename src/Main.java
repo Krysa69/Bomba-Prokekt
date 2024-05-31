@@ -7,7 +7,6 @@ public class Main {
         if (numOfPlayers > 0) {
             GUI gui = new GUI(numOfPlayers);
 
-            // Main game loop
             while (gui.players.size() > 1) {
                 for (int i = 0; i < gui.players.size(); i++) {
                     Player currentPlayer = gui.players.get(i);
@@ -21,14 +20,14 @@ public class Main {
                     CountDownLatch latch = new CountDownLatch(1);
                     Timer timer = new Timer(10000, e -> {
                         latch.countDown();
-                        gui.handleConfirmButtonClick(); // Handle timeout
+                        gui.handleConfirmButtonClick();
                     });
                     timer.setRepeats(false);
                     timer.start();
 
                     synchronized (gui) {
                         try {
-                            gui.wait(10000); // Wait for either user input or timeout
+                            gui.wait(10000);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -40,13 +39,13 @@ public class Main {
                     if (userInput.isEmpty()) {
                         JOptionPane.showMessageDialog(gui, "No answer! Player " + currentPlayer.getName() + " is out.");
                         gui.removePlayer(i);
-                        i--; // Adjust index due to player removal
+                        i--;
                     } else {
                         boolean isValidWord = gui.gameController.isWordInFile(userInput, gui.currentDice, gui.currentSyllable);
                         if (!isValidWord) {
                             JOptionPane.showMessageDialog(gui, "Incorrect word! Player " + currentPlayer.getName() + " is out.");
                             gui.removePlayer(i);
-                            i--; // Adjust index due to player removal
+                            i--;
                         } else {
                             gui.currentDice = gui.gameController.diceThrow();
                             gui.currentSyllable = gui.gameController.selectRandomSyllable();
@@ -65,6 +64,7 @@ public class Main {
         } else {
             System.out.println("No player selected. Exiting...");
         }
+        GameController.emptyUsedWordsFile();
     }
 
     private static double getRotationAngleForPlayer(int playerIndex, int numOfPlayers) {

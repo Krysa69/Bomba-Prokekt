@@ -28,7 +28,7 @@ public class GUI extends JFrame {
         cells = new ArrayList<>();
         gameController = new GameController();
 
-        // Initialize dice and syllable
+
         currentDice = gameController.diceThrow();
         currentSyllable = gameController.selectRandomSyllable();
 
@@ -42,7 +42,7 @@ public class GUI extends JFrame {
             mainPanel.add(cell);
         }
 
-        // Add players to their initial positions
+
         for (int i = 0; i < numOfPlayers; i++) {
             players.add(createPlayer(this));
         }
@@ -101,7 +101,7 @@ public class GUI extends JFrame {
         add(container);
 
         setVisible(true);
-        updatePlayerPositions(); // Update player positions after adding arrowPanel and other components
+        updatePlayerPositions();
     }
 
     private Player createPlayer(JFrame parentFrame) {
@@ -131,7 +131,7 @@ public class GUI extends JFrame {
         if (player == null) return;
         int cellIndex = cellRow * 9 + cellColumn;
         JPanel cell = cells.get(cellIndex);
-        cell.removeAll();  // Clear previous content
+        cell.removeAll();
         ImageIcon icon = createImageIcon("/resources/" + player.getProfilePicturePath(), cellWidth, cellHeight);
         JLabel imageLabel = new JLabel(icon);
         imageLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -182,7 +182,7 @@ public class GUI extends JFrame {
     private void updatePlayerPositions() {
         int cellWidth = 1000 / 9;
         int cellHeight = 1000 / 9;
-        clearPlayerCells(); // Clear all player cells first
+        clearPlayerCells();
         for (int i = 0; i < players.size(); i++) {
             Player player = players.get(i);
             int[] cellCoordinates = getPlayerCellCoordinates(i, players.size());
@@ -202,13 +202,11 @@ public class GUI extends JFrame {
     }
 
     private void restoreNonPlayerComponents() {
-        // Restore arrow panel
         cells.get(ARROW_PANEL_INDEX).removeAll();
         cells.get(ARROW_PANEL_INDEX).add(arrowPanel, BorderLayout.CENTER);
         cells.get(ARROW_PANEL_INDEX).revalidate();
         cells.get(ARROW_PANEL_INDEX).repaint();
 
-        // Restore info panel with dice, syllable, and confirm button
         JPanel infoPanel = new JPanel(new GridLayout(3, 1));
         infoPanel.add(diceResultLabel);
         infoPanel.add(syllableLabel);
@@ -245,7 +243,7 @@ public class GUI extends JFrame {
                 else if (playerIndex == 2) return new int[]{8, 4};
                 else return new int[]{4, 0};
             default:
-                return new int[]{0, 0}; // Fallback coordinates
+                return new int[]{0, 0};
         }
     }
 
