@@ -1,19 +1,34 @@
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * The ArrowPanel class is a custom JPanel that displays a rotating arrow.
+ * The arrow's rotation can be updated, and the panel will repaint to reflect the new angle.
+ */
 class ArrowPanel extends JPanel {
     private double angle;
 
+    /**
+     * Constructs an ArrowPanel with the specified initial angle.
+     */
     public ArrowPanel(double initialAngle) {
         this.angle = initialAngle;
         setPreferredSize(new Dimension(200, 200));
     }
 
+    /**
+     * Rotates the arrow to the specified new angle.
+     * The panel is repainted to reflect the change in angle.
+     */
     public void rotateArrow(double newAngle) {
         this.angle = newAngle;
         repaint();
     }
 
+    /**
+     * Paints the arrow on the panel.
+     * The arrow is drawn centered in the panel, and rotated to the current angle.
+     */
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);

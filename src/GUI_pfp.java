@@ -4,13 +4,23 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
 
+/**
+ * The GUI_pfp class provides a static method to display a dialog for selecting a profile picture.
+ * The dialog allows the user to enter their name and select a profile picture from a set of predefined images.
+ */
 public class GUI_pfp {
 
+    /**
+     * Displays a modal dialog for selecting a profile picture.
+     * The dialog prompts the user to enter their name and choose a profile picture from a grid of images.
+     */
     public static String[] selectProfilePicture(JFrame parentFrame) {
+        // Initialize the dialog
         JDialog dialog = new JDialog(parentFrame, "Select Profile Picture", true);
         dialog.setPreferredSize(new Dimension(600, 600));
         dialog.setLayout(new BorderLayout());
 
+        // Define the list of image names
         String[] imageNames = {
                 "sl.jpg", "scaredTyger.jpg", "gojo.jpg", "lebron.jpg",
                 "novby.jpg", "sam.jpg", "kocka.jpg", "mellstroy.jpg",
@@ -18,8 +28,10 @@ public class GUI_pfp {
                 "sukuna.png", "travisFish.png", "majsner.jpg", "bejr.jpg",
         };
 
+        // Initialize the result array
         String[] result = {null, null};
 
+        // Create and set up the input panel for the user to enter their name
         JPanel inputPanel = new JPanel();
         inputPanel.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -44,6 +56,7 @@ public class GUI_pfp {
 
         dialog.add(inputPanel, BorderLayout.CENTER);
 
+        // Add action listener to the continue button
         continueButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -53,6 +66,7 @@ public class GUI_pfp {
                     return;
                 }
 
+                // Remove the input panel and display the image selection grid
                 dialog.remove(inputPanel);
 
                 JLabel userNameLabel = new JLabel("Username: " + userName);
@@ -62,6 +76,7 @@ public class GUI_pfp {
                 JPanel panel = new JPanel();
                 panel.setLayout(new GridLayout(4, 4));
 
+                // Create buttons for each profile picture
                 for (String imageName : imageNames) {
                     URL imageUrl = GUI_pfp.class.getResource("/resources/" + imageName);
                     if (imageUrl == null) {
@@ -86,6 +101,7 @@ public class GUI_pfp {
                     panel.add(button);
                 }
 
+                // Add the panel to the dialog and update its size and layout
                 dialog.add(panel, BorderLayout.CENTER);
                 dialog.setSize(new Dimension(600, 600));
                 dialog.revalidate();
@@ -93,10 +109,12 @@ public class GUI_pfp {
             }
         });
 
+        // Set dialog properties and display it
         dialog.pack();
         dialog.setLocationRelativeTo(parentFrame);
         dialog.setVisible(true);
 
+        // Return the result array containing the selected image name and user name
         return result;
     }
 }

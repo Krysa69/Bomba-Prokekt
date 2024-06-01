@@ -5,6 +5,10 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The GUI class represents the main user interface for the Word Bomb game.
+ * It initializes the game components, manages player interactions, and handles the game flow.
+ */
 public class GUI extends JFrame {
     ArrowPanel arrowPanel;
     List<Player> players;
@@ -20,41 +24,52 @@ public class GUI extends JFrame {
     static final int ARROW_PANEL_INDEX = (9 * 4) + 4;
     static final int BUTTON_PANEL_INDEX = (9 * 5) + 4;
 
+    /**
+     * Constructs a new GUI instance with the specified number of players.
+     */
     public GUI(int numOfPlayers) {
+        // Set up the main window properties
         setTitle("Word Bomb");
         setSize(1000, 1000);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        // Initialize the player list, cell list, and game controller
         players = new ArrayList<>();
         cells = new ArrayList<>();
         gameController = new GameController();
 
-
+        // Determine the initial dice roll and syllable
         currentDice = gameController.diceThrow();
         currentSyllable = gameController.selectRandomSyllable();
 
+        // Create the main panel with a 9x9 grid layout
         JPanel mainPanel = new JPanel(new GridLayout(9, 9));
         int cellWidth = 1000 / 9;
         int cellHeight = 1000 / 9;
 
+        // Create and arrange 81 cells in the main panel
         for (int i = 0; i < 81; i++) {
             JPanel cell = new JPanel(new BorderLayout());
             cells.add(cell);
             mainPanel.add(cell);
         }
 
-
+        // Create player instances based on the number of players
         for (int i = 0; i < numOfPlayers; i++) {
             players.add(createPlayer(this));
         }
 
+        // Configure and place the arrow panel at the designated cell index
         arrowPanel = new ArrowPanel(getRotationAngle(numOfPlayers));
         cells.get(ARROW_PANEL_INDEX).add(arrowPanel, BorderLayout.CENTER);
 
+        // Set up the text area for writing input
         writingArea = new JTextArea();
         writingArea.setLineWrap(true);
         writingArea.setWrapStyleWord(true);
         JScrollPane scrollPane = new JScrollPane(writingArea);
 
+        // Configure and set up the confirm button
         confirmButton = new JButton("Confirm");
         confirmButton.setPreferredSize(new Dimension(cellWidth, 30));
         confirmButton.addActionListener(new ActionListener() {
@@ -104,6 +119,10 @@ public class GUI extends JFrame {
         updatePlayerPositions();
     }
 
+    /**
+     * Creates a new Player instance based on user input.
+     * Returns A new Player instance with the selected profile picture and name, or null if no selection was made.
+     */
     private Player createPlayer(JFrame parentFrame) {
         String[] playerInfo = GUI_pfp.selectProfilePicture(parentFrame);
         if (playerInfo[0] != null && playerInfo[1] != null) {
@@ -112,6 +131,10 @@ public class GUI extends JFrame {
         return null;
     }
 
+    /**
+     * Determines the rotation angle for the arrow panel based on the number of players.
+     * Returns The rotation angle for the arrow panel.
+     */
     private double getRotationAngle(int numOfPlayers) {
         switch (numOfPlayers) {
             case 1:
@@ -127,6 +150,9 @@ public class GUI extends JFrame {
         }
     }
 
+    /**
+     * Adds a player to a specific cell on the game board.
+     */
     private void addPlayerToCell(List<JPanel> cells, int cellRow, int cellColumn, Player player, int cellWidth, int cellHeight) {
         if (player == null) return;
         int cellIndex = cellRow * 9 + cellColumn;
@@ -143,6 +169,9 @@ public class GUI extends JFrame {
         cell.repaint();
     }
 
+    /**
+     * Creates an ImageIcon from the specified path, scaled to the given dimensions.
+     */
     private ImageIcon createImageIcon(String path, int width, int height) {
         ImageIcon originalIcon = new ImageIcon(getClass().getResource(path));
         Image originalImage = originalIcon.getImage();
@@ -150,12 +179,19 @@ public class GUI extends JFrame {
         return new ImageIcon(scaledImage);
     }
 
+    /**
+     * Handles the action when the confirm button is clicked.
+     * Notifies any waiting threads that the button has been clicked.
+     */
     public void handleConfirmButtonClick() {
         synchronized (this) {
             this.notify();
         }
     }
 
+    /**
+     * Removes a player from the game and updates the game board accordingly.
+     */
     public void removePlayer(int playerIndex) {
         if (playerIndex < 0 || playerIndex >= players.size()) return;
         Player player = players.get(playerIndex);
@@ -179,6 +215,9 @@ public class GUI extends JFrame {
         changeDiceAndSyllable();
     }
 
+    /**
+     * Updates the positions of all players on the game board.
+     */
     private void updatePlayerPositions() {
         int cellWidth = 1000 / 9;
         int cellHeight = 1000 / 9;
@@ -191,6 +230,9 @@ public class GUI extends JFrame {
         restoreNonPlayerComponents();
     }
 
+    /**
+     * Clears the content of all cells except the arrow panel and button panel.
+     */
     private void clearPlayerCells() {
         for (int i = 0; i < cells.size(); i++) {
             if (i != ARROW_PANEL_INDEX && i != BUTTON_PANEL_INDEX) {
@@ -201,6 +243,9 @@ public class GUI extends JFrame {
         }
     }
 
+    /**
+     * Restores the components in the arrow panel and button panel after updating player positions.
+     */
     private void restoreNonPlayerComponents() {
         cells.get(ARROW_PANEL_INDEX).removeAll();
         cells.get(ARROW_PANEL_INDEX).add(arrowPanel, BorderLayout.CENTER);
@@ -219,6 +264,9 @@ public class GUI extends JFrame {
         cells.get(BUTTON_PANEL_INDEX).repaint();
     }
 
+    /**
+     * Changes the current dice result and syllable to new random values.
+     */
     private void changeDiceAndSyllable() {
         currentDice = gameController.diceThrow();
         currentSyllable = gameController.selectRandomSyllable();
@@ -226,6 +274,9 @@ public class GUI extends JFrame {
         syllableLabel.setText("Syllable: " + currentSyllable);
     }
 
+    /**
+     * Returns the coordinates of the cell for the specified player based on the number of players.
+     */
     private int[] getPlayerCellCoordinates(int playerIndex, int numOfPlayers) {
         switch (numOfPlayers) {
             case 1:
@@ -247,6 +298,9 @@ public class GUI extends JFrame {
         }
     }
 
+    /**
+     * Displays a dialog for selecting the number of players.
+     */
     public static int playerNumberChoosing() {
         String[] options = {"1", "2", "3", "4"};
         int result = JOptionPane.showOptionDialog(null, "Choose number of player:", "Selection", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);

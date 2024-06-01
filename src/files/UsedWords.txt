@@ -1,6 +1,3 @@
-female
-high
 ohio
 high
-car
 life
